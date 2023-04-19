@@ -1,4 +1,4 @@
-const db = require("../model/sequelize");
+const db = require("../models/sequelize");
 const User = db.registration;
 const userSetting = db.userSetting;
 const feedModel = db.userFeed;
