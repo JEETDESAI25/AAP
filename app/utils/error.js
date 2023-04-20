@@ -2,12 +2,10 @@ const config = require("./config");
 const logger = require('../loggers/logger')
 
 class GeneralError extends Error {
-  constructor(message, data = "", statusCode = "") {
+  constructor(message, statusCode = "") {
     super();
     this.message = message;
     this.statusCode = ""?config.HTTP_ACCEPTED:statusCode;
-    this.data = data === "" ? undefined : data;
-    this.action = 0;
   }
   getCode() {
     if (this instanceof BadRequest) {

@@ -8,15 +8,12 @@ const handleErrors = (err, req, res, next) => {
       status: config.ERROR,
       code: err.statusCode !== "" ? err.statusCode : err.getCode(),
       message: err.message,
-      data: err.data !== "" ? err.data : undefined,
-      Action: err.action,
     });
   }
   return res.status(config.HTTP_SERVER_ERROR).json({
     status: config.ERROR,
     code: err.statusCode !== "" ? err.statusCode : config.HTTP_SERVER_ERROR,
     message: err.message,
-    action: err.action,
   });
 };
 
