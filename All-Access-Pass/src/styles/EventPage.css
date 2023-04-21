@@ -1,0 +1,9 @@
+.event-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 104px);
+  background-color: #e74c3c;
+  color: white;
+  font-size: 2rem;
+}
