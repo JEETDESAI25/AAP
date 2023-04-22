@@ -7,114 +7,15 @@ const { GeneralResponse } = require('../utils/response');
 const { GeneralError, BadRequest, NotFound } = require('../utils/error');
 const { mailSend } = require("../services/mail");
 const firestore = firebase.firestore();
+const { generateToken } = require("../helpers/auth");
 var otp = Math.floor(1000 + Math.random() * 9000);
 require("dotenv").config();
-
-
-// exports.forgotPassword = async(req, res, next) => {
-//     try {
-//         const { email } = req.body;
-//         const userData = await homeModel
-//             .findUser(["userId", "email"], { email })
-//             .catch((err) => next(new GeneralResponse("Something went wrong",err,config.HTTP_SERVER_ERROR)));
-//         if (userData.length > 0) {
-//             const otpUpdate = await userModel.update({ matchedId: otp }, { where: { email } });
-//             if (otpUpdate) {
-//                 mailSend(
-//                         email,
-//                         "Forgot password",
-//                         'To reset your password enter this verification code : "' + otp + '"'
-//                     )
-//                     .then(async() => {
-//                         next(new GeneralResponse("Email has been sent.",otp, config.HTTP_SUCCESS,1));
-//                     })
-//                     .catch((err) => next(new GeneralResponse("Something went wrong",err,config.HTTP_SERVER_ERROR)));
-//             } else {
-//                 next(
-//                     new GeneralResponse("Data not updated.",[],config.HTTP_NOT_FOUND)
-//                 );
-//             }
-//         } else {
-//             next(
-//                 new GeneralResponse("Data not found.",[],config.HTTP_NOT_FOUND)
-//             );
-//         }
-//     } catch (err) {
-//         logger.error("err", err);
-//         next(new GeneralError("Failed to send email"));
-//     }
-// };
-
-// exports.resetPassword = async(req, res, next) => {
-//     try {
-//         const { newPassword, matchedId } = req.body;
-//         const userData = await homeModel
-//             .findUser(["matchedId"], { matchedId })
-//             .catch((err) => next(new GeneralResponse("Something went wrong",err,config.HTTP_SERVER_ERROR)));
-//         if (userData.length > 0) {
-//             const encryptedPassword = await bcrypt.hash(newPassword, saltRounds);
-//             const updatePassword = await userModel
-//                 .update({ password: encryptedPassword }, { where: { matchedId } })
-//                 .catch((err) => next(new GeneralResponse("Something went wrong",err,config.HTTP_SERVER_ERROR)));
-//             if (updatePassword) {
-//                 next(
-//                     new GeneralResponse(
-//                         "Your password is updated successfully.",
-//                         undefined,
-//                         config.HTTP_ACCEPTED,
-//                         1
-//                     )
-//                 );
-//             } else {
-//                 next(
-//                     new GeneralResponse("Your password is not updated.",[],config.HTTP_NOT_FOUND)
-//                 );
-//             }
-//         } else {
-//             next(
-//                 new GeneralResponse("Data not found.",[],config.HTTP_NOT_FOUND)
-//             );
-//         }
-//     } catch (err) {
-//         logger.error("err", err);
-//         next(new GeneralError("Failed to update"));
-//     }
-// };
-
-// exports.changePassword = async(req, res, next) => {
-//     try {
-//         const userId = req.params.userId;
-
-//         const updatePassword = { password: await bcrypt.hash(req.body.newPassword, saltRounds) };
-
-//         const changePassword = await userModel.update(updatePassword, { where: { userId } })
-//             .catch((err) =>next(new GeneralResponse("Something went wrong",err,config.HTTP_SERVER_ERROR)))
-//         const [dataValues] = changePassword;
-//         if (dataValues === 1) {
-//             next(
-//                 new GeneralResponse(
-//                     "Your password is updated successfully.",
-//                     undefined,
-//                     config.HTTP_ACCEPTED,
-//                     1
-//                 )
-//             );
-//         } else {
-//             next(
-//                 new GeneralResponse("Please Try Again Later.",[], config.HTTP_NOT_FOUND)
-//             );
-//         }
-//     } catch (err) {
-//         logger.error("err", err);
-//         next(new GeneralError("Failed to update"));
-//     }
-// };
 
 const userRegistration = async (req, res, next) => {
     try {
         let data = req.body;
-        const users = await firestore.collection('users').where("email", "==", data.email);
-        const existingUser = await users.get();
+        const user = await firestore.collection('users').where("email", "==", data.email);
+        const existingUser = await user.get();
         const usersArray = [];
 
         existingUser.forEach(doc => { usersArray.push(doc.id) });
@@ -127,8 +28,7 @@ const userRegistration = async (req, res, next) => {
             data.password = await bcrypt.hash(data.password, 10);
             await firestore.collection('users').doc().set(data);
             next(
-                new GeneralResponse(
-                    "Record saved successfully.")
+                new GeneralResponse("Record saved successfully.", data)
             );
         }
     } catch (error) {
@@ -144,12 +44,17 @@ const userLogin = async (req, res, next) => {
         const usersArray = [];
 
         existingUser.forEach(doc => { usersArray.push(doc.data().password) });
+        existingUser.forEach(doc => { usersArray.push(doc.id) });
 
         if (usersArray.length > 0) {
             const comparison = await bcrypt.compare(data.password, usersArray[0]);
             if (comparison) {
+                const response = {
+                    userId: usersArray[1]
+                }
+                response.token = generateToken(usersArray[1]);
                 next(
-                    new GeneralResponse("You are login successfully.")
+                    new GeneralResponse("You are login successfully.", response)
                 );
             } else {
                 next(
@@ -180,14 +85,17 @@ const forgotPassword = async (req, res, next) => {
             );
         } else {
             mailSend(
-                email,
+                req.body.email,
                 "Forgot password",
                 'To reset your password enter this verification code : "' + otp + '"'
             )
                 .then(async () => {
-                    next(new GeneralResponse(`${usersArray[0]} has been sent ${otp}`));
+                    next(new GeneralResponse(`Email has been sent.`, { userId: usersArray[0], otp }));
                 })
-                .catch((err) => next(new GeneralResponse("Something went wrong", err, config.HTTP_SERVER_ERROR)));
+                .catch((err) => {
+                    console.log(err)
+                    next(new GeneralError("Something went wrong"))
+                });
         }
     } catch (error) {
         next(new GeneralError("Error Generated."));
@@ -197,22 +105,27 @@ const forgotPassword = async (req, res, next) => {
 const updatePassword = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const data = await bcrypt.hash(req.body.password, 10);
+        const password = await bcrypt.hash(req.body.password, 10);
         const user = await firestore.collection('users').doc(id);
-        await user.update(data);
-        res.send('User password updated successfuly');
+        await user.update({ password });
+        next(
+            new GeneralResponse("User password updated successfully.")
+        );
     } catch (error) {
-        res.status(400).send(error.message);
+        next(new GeneralError("Error Generated."));
     }
 }
 
+// Admin Panel
 const getAllUsers = async (req, res, next) => {
     try {
         const users = await firestore.collection('users');
         const data = await users.get();
         const usersArray = [];
         if (data.empty) {
-            res.status(404).send('No users record found');
+            next(
+                new NotFound("Data not found.")
+            );
         } else {
             data.forEach(doc => {
                 const user = new User(
@@ -220,6 +133,7 @@ const getAllUsers = async (req, res, next) => {
                     doc.data().firstName,
                     doc.data().lastName,
                     doc.data().middleName,
+                    doc.data().email,
                     doc.data().age,
                     doc.data().phoneNumber,
                     doc.data().password,
@@ -230,46 +144,59 @@ const getAllUsers = async (req, res, next) => {
                 delete user.password;
                 usersArray.push(user);
             });
-            res.send(usersArray);
+            next(
+                new GeneralResponse("Users Data retrieved successfully.", usersArray)
+            );
         }
     } catch (error) {
-        res.status(400).send(error.message);
+        next(new GeneralError("Error Generated."));
     }
 }
 
+// auth
 const getUser = async (req, res, next) => {
     try {
         const id = req.params.id;
         const user = await firestore.collection('users').doc(id);
         const data = await user.get();
         if (!data.exists) {
-            res.status(404).send('Student with the given ID not found');
+            next(
+                new NotFound("Data not found.")
+            );
         } else {
-            res.send(data.data());
+            next(
+                new GeneralResponse("User Data retrieved successfully.", data.data())
+            );
         }
     } catch (error) {
-        res.status(400).send(error.message);
+        next(new GeneralError("Error Generated."));
     }
 }
 
+// auth
 const updateUser = async (req, res, next) => {
     try {
         const id = req.params.id;
         const data = req.body;
         const user = await firestore.collection('users').doc(id);
         await user.update(data);
-        res.send('User record updated successfuly');
+        next(
+            new GeneralResponse("User Data updated successfully.")
+        );
     } catch (error) {
-        res.status(400).send(error.message);
+        next(new GeneralError("Error Generated."));
     }
 }
 
+// Admin Panel
 const deleteUser = async (req, res, next) => {
     try {
         const id = req.params.id;
         const user = await firestore.collection('users').doc(id);
         await user.update({ isValid: false });
-        res.send('Record deleted successfuly');
+        next(
+            new GeneralResponse("User Data deleted successfully.")
+        );
     } catch (error) {
         res.status(400).send(error.message);
     }
@@ -279,6 +206,7 @@ module.exports = {
     userRegistration,
     userLogin,
     forgotPassword,
+    updatePassword,
     getAllUsers,
     getUser,
     updateUser,

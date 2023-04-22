@@ -6,7 +6,8 @@ const handleResponse = (response, req, res, next) => {
         return res.status(config.HTTP_SUCCESS).json({
             status: config.SUCCESS,
             code: response.statusCode,
-            message: response.message
+            message: response.message,
+            data: response.data,
         })
     }
     next(response);

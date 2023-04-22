@@ -21,7 +21,7 @@ const handleJoiErrors = (err, req, res, next) => {
   if (err && err.error && err.error.isJoi) {
     logger.error(err.error);
     const customErrorResponse = {};
-    if (err.error.details.length !== 0) {
+    if (err.error.details.length !== 0) {w
       err.error.details.forEach(item => {
         customErrorResponse[`${item.context.key}`] = {
           message: item.message,
