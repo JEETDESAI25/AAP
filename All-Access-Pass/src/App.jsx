@@ -29,12 +29,11 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <ProtectedRoute>
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/gallery" element={<GalleryPage />} />
-            <Route path="/rewards" element={<RewardsPage />} />
-            <Route path="/events" element={<EventPage />} />
-          </ProtectedRoute>
+
+          <ProtectedRoute path="/home" element={<HomePage />} />
+          <ProtectedRoute path="/gallery" element={<GalleryPage />} />
+          <ProtectedRoute path="/rewards" element={<RewardsPage />} />
+          <ProtectedRoute path="/events" element={<EventPage />} />
         </Routes>
       </main>
       <Footer />
