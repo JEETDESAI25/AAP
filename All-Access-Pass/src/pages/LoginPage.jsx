@@ -1,5 +1,6 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import axios from "axios";
 import "../styles/LoginPage.css";
@@ -59,6 +60,9 @@ const LoginPage = () => {
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <button type="submit">Login</button>
       </form>
+      <p>
+        Don't have an account? <Link to="/register">Register</Link>
+      </p>
     </div>
   );
 };
