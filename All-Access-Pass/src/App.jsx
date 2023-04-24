@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import GalleryPage from "./pages/GalleryPage";
 import RewardsPage from "./pages/RewardsPage";
 import EventPage from "./pages/EventPage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
   return (
@@ -13,7 +14,8 @@ function App() {
       <Header />
       <main>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/rewards" element={<RewardsPage />} />
           <Route path="/events" element={<EventPage />} />
