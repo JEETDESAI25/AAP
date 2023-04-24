@@ -4,7 +4,8 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-
+import { useContext } from "react";
+import AuthContext from "./context/AuthContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
@@ -13,24 +14,27 @@ import RewardsPage from "./pages/RewardsPage";
 import EventPage from "./pages/EventPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function AppContent() {
+  const { isLoggedIn } = useContext(AuthContext);
   const location = useLocation();
 
   return (
     <>
-      {location.pathname !== "/" && location.pathname !== "/register" && (
-        <Header />
-      )}
+      {isLoggedIn &&
+        location.pathname !== "/" &&
+        location.pathname !== "/register" && <Header />}
       <main>
         <Routes>
           <Route path="/" element={<LoginPage />} />
-          {/* <Route path="/login" element={<LoginPage />} /> */}
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/rewards" element={<RewardsPage />} />
-          <Route path="/events" element={<EventPage />} />
+          <ProtectedRoute>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/rewards" element={<RewardsPage />} />
+            <Route path="/events" element={<EventPage />} />
+          </ProtectedRoute>
         </Routes>
       </main>
       <Footer />

@@ -1,30 +1,34 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { loginUser } from "../api/auth";
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthContext";
+import axios from "axios";
 import "../styles/LoginPage.css";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    setErrorMessage("");
 
     try {
-      const response = await loginUser(email, password);
+      const response = await axios.post("https://your-api-url.com/login", {
+        email,
+        password,
+      });
 
-      if (response.status === 200) {
-        const { token } = await response.json();
-        localStorage.setItem("authToken", token);
-        // Redirect the user to the home page or any other protected route
+      if (response.data.token) {
+        login();
+        navigate("/home");
       } else {
-        const { error } = await response.json();
-        setError(error);
+        setErrorMessage("Login failed. Please check your email and password.");
       }
-    } catch (err) {
-      setError("Login failed");
+    } catch (error) {
+      setErrorMessage("An error occurred. Please try again later.");
     }
   };
 
@@ -32,28 +36,29 @@ const LoginPage = () => {
     <div className="login-page">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div className="form-group">
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
         <button type="submit">Login</button>
       </form>
-      {error && <div className="error">{error}</div>}
-      <p>
-        Don't have an account? <Link to="/register">Register</Link>
-      </p>
     </div>
   );
 };
