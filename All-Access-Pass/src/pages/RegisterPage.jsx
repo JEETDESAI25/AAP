@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { loginUser } from "../api/auth";
-import "../styles/LoginPage.css";
+import { registerUser } from "../api/auth";
+import "../styles/RegisterPage.css";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -13,24 +13,22 @@ const LoginPage = () => {
     setError(null);
 
     try {
-      const response = await loginUser(email, password);
+      const response = await registerUser(email, password);
 
       if (response.status === 200) {
-        const { token } = await response.json();
-        localStorage.setItem("authToken", token);
-        // Redirect the user to the home page or any other protected route
+        // Redirect the user to the login page or show a success message
       } else {
         const { error } = await response.json();
         setError(error);
       }
     } catch (err) {
-      setError("Login failed");
+      setError("Registration failed");
     }
   };
 
   return (
-    <div className="login-page">
-      <h2>Login</h2>
+    <div className="register-page">
+      <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">Email:</label>
         <input
@@ -48,14 +46,14 @@ const LoginPage = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
       </form>
       {error && <div className="error">{error}</div>}
       <p>
-        Don't have an account? <Link to="/register">Register</Link>
+        Already have an account? <Link to="/login">Login</Link>
       </p>
     </div>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
