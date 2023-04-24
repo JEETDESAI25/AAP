@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -8,10 +13,12 @@ import RewardsPage from "./pages/RewardsPage";
 import EventPage from "./pages/EventPage";
 import LoginPage from "./pages/LoginPage";
 
-function App() {
+function AppContent() {
+  const location = useLocation();
+
   return (
-    <Router>
-      <Header />
+    <>
+      {location.pathname !== "/" && <Header />}
       <main>
         <Routes>
           <Route path="/" element={<LoginPage />} />
@@ -22,6 +29,14 @@ function App() {
         </Routes>
       </main>
       <Footer />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
