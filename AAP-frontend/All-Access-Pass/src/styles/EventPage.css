@@ -1,0 +1,50 @@
+.event-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 104px);
+  background-color: #e74c3c;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 2rem;
+}
+
+.event-page h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.event-page p {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.event-page ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.event-page li {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.event-page button {
+  font-size: 1.5rem;
+  background-color: white;
+  color: #e74c3c;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.event-page button:hover {
+  background-color: #fff7f6;
+}
