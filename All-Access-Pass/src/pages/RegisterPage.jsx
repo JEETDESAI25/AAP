@@ -7,6 +7,7 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,7 +17,7 @@ const RegisterPage = () => {
       const response = await registerUser(email, password);
 
       if (response.status === 200) {
-        // Redirect the user to the login page or show a success message
+        setSuccess("Registered Successfully");
       } else {
         const { error } = await response.json();
         setError(error);
@@ -29,6 +30,8 @@ const RegisterPage = () => {
   return (
     <div className="register-page">
       <h2>Register</h2>
+      {error && <div className="error">{error}</div>}
+      {success && <div className="success">{success}</div>}
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">Email:</label>
         <input
@@ -48,9 +51,8 @@ const RegisterPage = () => {
         />
         <button type="submit">Register</button>
       </form>
-      {error && <div className="error">{error}</div>}
       <p>
-        Already have an account? <Link to="/login">Login</Link>
+        Already have an account? <Link to="/">Login</Link>
       </p>
     </div>
   );

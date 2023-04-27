@@ -34,10 +34,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-page">
+    <div className="register-page">
       <h2>Unleash Excitements!!</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
           <label htmlFor="email">Email:</label>
           <input
             type="email"
@@ -46,8 +45,6 @@ const LoginPage = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </div>
-        <div className="form-group">
           <label htmlFor="password">Password:</label>
           <input
             type="password"
@@ -56,7 +53,6 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <button type="submit">Login</button>
       </form>

@@ -21,7 +21,6 @@ function AppContent() {
 
   const routes = useRoutes([
     { path: "/", element: <LoginPage /> },
-    { path: "/login", element: <LoginPage /> },
 
     { path: "/register", element: <RegisterPage /> },
     { path: "/home", element: isLoggedIn ? <HomePage /> : <ProtectedRoute /> },
