@@ -35,7 +35,7 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-      <h2>Login</h2>
+      <h2>Unleash Excitements!!</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="email">Email:</label>
