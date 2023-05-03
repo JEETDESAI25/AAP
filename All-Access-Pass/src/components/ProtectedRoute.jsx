@@ -11,7 +11,7 @@ const ProtectedRoute = (props) => {
     return (
       <Navigate
         to={{
-          pathname: "/login",
+          pathname: "/",
         }}
       />
     );
