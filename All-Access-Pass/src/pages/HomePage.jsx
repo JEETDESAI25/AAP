@@ -6,26 +6,25 @@ import home4 from "../assets/home4.jpg";
 
 const HomePage = () => {
   return (
-    <div >
-      <h1 class="center">Welcome to the All-Access Pass NFT Platform</h1>
-        <div id="captioned-gallery">
-          <figure class="slider">
-            <figure>
-              <img src={home1} />
-              </figure>
-            <figure>
-              <img src={home2} />
-              </figure>
-            <figure>
-              
-              <img src={home3} />
-              </figure>
-            <figure>
-              <img src={home4} />
-             </figure>
+    <div>
+      <h1 class="center">All-Access Pass</h1>
+      <div id="captioned-gallery">
+        <figure class="slider">
+          <figure>
+            <img src={home1} />
           </figure>
-        </div>
+          <figure>
+            <img src={home2} />
+          </figure>
+          <figure>
+            <img src={home3} />
+          </figure>
+          <figure>
+            <img src={home4} />
+          </figure>
+        </figure>
       </div>
+    </div>
   );
 };
 
