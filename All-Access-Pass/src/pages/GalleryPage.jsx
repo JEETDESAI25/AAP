@@ -15,9 +15,9 @@ import gallery12 from "../assets/gallery12.jpg";
 const GalleryPage = () => {
   return (
     <div>
-      <h1 class="center">NFT Gallery</h1>
-      <div class="container">
-        <div class="img-grid">
+      <h1 className="center">NFT Gallery</h1>
+      <div className="container">
+        <div className="img-grid">
           <img src={gallery1} />
           <img src={gallery2} />
           <img src={gallery3} />

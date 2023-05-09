@@ -7,9 +7,9 @@ import home4 from "../assets/home4.jpg";
 const HomePage = () => {
   return (
     <div>
-      <h1 class="center">All-Access Pass</h1>
+      <h1 className="center">All-Access Pass</h1>
       <div id="captioned-gallery">
-        <figure class="slider">
+        <figure className="slider">
           <figure>
             <img src={home1} />
           </figure>
